@@ -1,4 +1,5 @@
 import streamlit as st
+
 from word_guess_game import select_random_word, initialize_placeholder, update_placeholder, display_placeholder
 
 # List of words for the game
