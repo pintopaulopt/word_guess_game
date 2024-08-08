@@ -35,6 +35,12 @@ if 'chosen_word' not in st.session_state:
 def word_guess_game():
     st.title("Word Guess Game")
 
+    # Reset Game button
+    if st.button("Reset Game"):
+        initialize_game()
+        st.experimental_rerun()  # Optional: Forces the app to re-run, ensuring the reset takes immediate effect.
+        st.stop()  # Stop further processing after reset.
+
     # Display the current state of the placeholder
     st.write(display_placeholder(st.session_state.placeholder))
 
@@ -63,11 +69,6 @@ def word_guess_game():
         elif st.session_state.attempts <= 0:
             st.write(f"Game over! The word was: {st.session_state.chosen_word}")
             st.session_state.game_status = "Game Over"
-
-    # Reset Game button
-    if st.button("Reset Game"):
-        initialize_game()
-        st.write("Game has been reset.")
 
     # Display the current state
     st.write(f"Attempts left: {st.session_state.attempts}")
