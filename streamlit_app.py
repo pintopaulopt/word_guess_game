@@ -1,11 +1,30 @@
 import streamlit as st
-
 from word_guess_game import select_random_word, initialize_placeholder, update_placeholder, display_placeholder
+
+# Initialize session state if not already set
+if 'attempts' not in st.session_state:
+    st.session_state.attempts = 6
+if 'guessed_letters' not in st.session_state:
+    st.session_state.guessed_letters = set()
+if 'game_status' not in st.session_state:
+    st.session_state.game_status = "Playing"
+
+# Example button to reset game state
+if st.button("Reset Game"):
+    st.session_state.attempts = 6
+    st.session_state.guessed_letters = set()
+    st.session_state.game_status = "Playing"
+
+# Display the current state
+st.write(f"Attempts left: {st.session_state.attempts}")
+st.write(f"Guessed letters: {st.session_state.guessed_letters}")
+st.write(f"Game status: {st.session_state.game_status}")
 
 # List of words for the game
 word_list = ["Pythonic", "looping", "coding"]
 
 def initialize_game():
+    """Initialize or reset the game state."""
     st.session_state.chosen_word = select_random_word(word_list)
     st.session_state.word_length = len(st.session_state.chosen_word)
     st.session_state.placeholder = initialize_placeholder(st.session_state.word_length)
@@ -14,6 +33,7 @@ def initialize_game():
     st.session_state.game_status = "Playing"
 
 def word_guess_game():
+    """Main game logic and UI."""
     if 'chosen_word' not in st.session_state:
         initialize_game()
 
