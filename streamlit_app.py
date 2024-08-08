@@ -44,4 +44,35 @@ def word_guess_game():
         if not guess.isalpha() or len(guess) != 1:
             st.write("Invalid input. Please enter a single letter.")
         elif guess in st.session_state.guessed_letters:
-         
+            st.write("You've already guessed that letter.")
+        else:
+            st.session_state.guessed_letters.add(guess)
+            if guess in st.session_state.chosen_word.lower():
+                st.session_state.placeholder = update_placeholder(st.session_state.chosen_word, st.session_state.placeholder, guess)
+                st.write("Good guess!")
+            else:
+                st.session_state.attempts -= 1
+                st.write(f"Wrong guess! You have {st.session_state.attempts} attempts left.")
+
+        st.write(display_placeholder(st.session_state.placeholder))
+
+        # Check game status
+        if "_" not in st.session_state.placeholder:
+            st.write(f"Congratulations! You've guessed the word: {st.session_state.chosen_word}")
+            st.session_state.game_status = "Game Over"
+        elif st.session_state.attempts <= 0:
+            st.write(f"Game over! The word was: {st.session_state.chosen_word}")
+            st.session_state.game_status = "Game Over"
+
+    # Reset Game button
+    if st.button("Reset Game"):
+        initialize_game()
+        st.write("Game has been reset.")
+    
+    # Display the current state
+    st.write(f"Attempts left: {st.session_state.attempts}")
+    st.write(f"Guessed letters: {st.session_state.guessed_letters}")
+    st.write(f"Game status: {st.session_state.game_status}")
+
+# Run the game
+word_guess_game()
