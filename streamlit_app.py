@@ -27,9 +27,8 @@ def initialize_game():
     st.session_state.attempts = 6
     st.session_state.guessed_letters = set()
     st.session_state.game_status = "Playing"
-    st.session_state.latest_guess = ''  # Clear the latest guess
 
-# Initialize game if not already done
+# Initialize the game if not already done
 if 'chosen_word' not in st.session_state:
     initialize_game()
 
@@ -44,7 +43,7 @@ def word_guess_game():
     # Reset Game button
     if st.button("Reset Game"):
         initialize_game()
-        st.write("Game has been reset. Please enter a new guess.")
+        st.experimental_rerun()  # Rerun the app to refresh the UI after resetting
 
     if guess:
         if not guess.isalpha() or len(guess) != 1:
@@ -53,7 +52,6 @@ def word_guess_game():
             st.write("You've already guessed that letter.")
         else:
             st.session_state.guessed_letters.add(guess)
-            st.session_state.latest_guess = guess  # Store the latest guess
             if guess in st.session_state.chosen_word.lower():
                 st.session_state.placeholder = update_placeholder(st.session_state.chosen_word, st.session_state.placeholder, guess)
                 st.write("Good guess!")
