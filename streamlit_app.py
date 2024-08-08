@@ -28,10 +28,11 @@ def initialize_game():
     st.session_state.guessed_letters = set()
     st.session_state.game_status = "Playing"
 
-def word_guess_game():
-    if 'chosen_word' not in st.session_state:
-        initialize_game()
+# Ensure game is initialized if not already
+if 'chosen_word' not in st.session_state:
+    initialize_game()
 
+def word_guess_game():
     st.title("Word Guess Game")
 
     # Display the current state of the placeholder
@@ -43,34 +44,4 @@ def word_guess_game():
         if not guess.isalpha() or len(guess) != 1:
             st.write("Invalid input. Please enter a single letter.")
         elif guess in st.session_state.guessed_letters:
-            st.write("You've already guessed that letter.")
-        else:
-            st.session_state.guessed_letters.add(guess)
-            if guess in st.session_state.chosen_word.lower():
-                st.session_state.placeholder = update_placeholder(st.session_state.chosen_word, st.session_state.placeholder, guess)
-                st.write("Good guess!")
-            else:
-                st.session_state.attempts -= 1
-                st.write(f"Wrong guess! You have {st.session_state.attempts} attempts left.")
-
-        st.write(display_placeholder(st.session_state.placeholder))
-
-        # Check game status
-        if "_" not in st.session_state.placeholder:
-            st.write(f"Congratulations! You've guessed the word: {st.session_state.chosen_word}")
-            st.session_state.game_status = "Game Over"
-        elif st.session_state.attempts <= 0:
-            st.write(f"Game over! The word was: {st.session_state.chosen_word}")
-            st.session_state.game_status = "Game Over"
-
-    # Restart the game
-    if st.button("Restart Game"):
-        initialize_game()
-
-    # Display the current state
-    st.write(f"Attempts left: {st.session_state.attempts}")
-    st.write(f"Guessed letters: {st.session_state.guessed_letters}")
-    st.write(f"Game status: {st.session_state.game_status}")
-
-# Run the game
-word_guess_game()
+         
