@@ -1,33 +1,31 @@
 import streamlit as st
-import random
+from word_guess_game import select_random_word, initialize_placeholder, update_placeholder, display_placeholder
 
-# Function to select a random word from the provided list
-def select_random_word(word_list):
-    return random.choice(word_list)
+# Initialize session state if not already set
+if 'attempts' not in st.session_state:
+    st.session_state.attempts = 6
+if 'guessed_letters' not in st.session_state:
+    st.session_state.guessed_letters = set()
+if 'game_status' not in st.session_state:
+    st.session_state.game_status = "Playing"
 
-# Function to initialize the placeholder with underscores
-def initialize_placeholder(word_length):
-    return ["_"] * word_length
+# Example button to reset game state
+if st.button("Reset Game"):
+    st.session_state.attempts = 6
+    st.session_state.guessed_letters = set()
+    st.session_state.game_status = "Playing"
+    # No need for st.experimental_rerun() anymore
 
-# Function to update the placeholder with the guessed letter
-def update_placeholder(chosen_word, placeholder, guess):
-    for position in range(len(chosen_word)):
-        if chosen_word[position].lower() == guess:
-            placeholder[position] = chosen_word[position]
-    return placeholder
+# Display the current state
+st.write(f"Attempts left: {st.session_state.attempts}")
+st.write(f"Guessed letters: {st.session_state.guessed_letters}")
+st.write(f"Game status: {st.session_state.game_status}")
 
-# Function to display the placeholder with spaces between characters
-def display_placeholder(placeholder):
-    return " ".join(placeholder)
-
-# List of possible words for the game
+# List of words for the game
 word_list = ["Pythonic", "looping", "coding"]
 
-# Streamlit app layout
-st.title("Word Guess Game")
-
-# Initialize game state
-if 'chosen_word' not in st.session_state:
+def initialize_game():
+    """Initialize or reset the game state."""
     st.session_state.chosen_word = select_random_word(word_list)
     st.session_state.word_length = len(st.session_state.chosen_word)
     st.session_state.placeholder = initialize_placeholder(st.session_state.word_length)
@@ -35,41 +33,45 @@ if 'chosen_word' not in st.session_state:
     st.session_state.guessed_letters = set()
     st.session_state.game_status = "Playing"
 
-# Display the current state of the placeholder
-st.write(display_placeholder(st.session_state.placeholder))
+def word_guess_game():
+    """Main game logic and UI."""
+    if 'chosen_word' not in st.session_state:
+        initialize_game()
 
-# User input for guessing a letter
-guess = st.text_input("Guess a letter:", max_chars=1).lower()
+    st.title("Word Guess Game")
 
-# Process the guess
-if guess:
-    if not guess.isalpha() or len(guess) != 1:
-        st.error("Invalid input. Please enter a single letter.")
-    elif guess in st.session_state.guessed_letters:
-        st.warning("You've already guessed that letter.")
-    else:
-        st.session_state.guessed_letters.add(guess)
-        if guess in st.session_state.chosen_word.lower():
-            st.session_state.placeholder = update_placeholder(st.session_state.chosen_word, st.session_state.placeholder, guess)
-            st.success("Good guess!")
+    # Display the current state of the placeholder
+    st.write(display_placeholder(st.session_state.placeholder))
+
+    guess = st.text_input("Guess a letter:", max_chars=1).lower()
+
+    if guess:
+        if not guess.isalpha() or len(guess) != 1:
+            st.write("Invalid input. Please enter a single letter.")
+        elif guess in st.session_state.guessed_letters:
+            st.write("You've already guessed that letter.")
         else:
-            st.session_state.attempts -= 1
-            st.error(f"Wrong guess! You have {st.session_state.attempts} attempts left.")
+            st.session_state.guessed_letters.add(guess)
+            if guess in st.session_state.chosen_word.lower():
+                st.session_state.placeholder = update_placeholder(st.session_state.chosen_word, st.session_state.placeholder, guess)
+                st.write("Good guess!")
+            else:
+                st.session_state.attempts -= 1
+                st.write(f"Wrong guess! You have {st.session_state.attempts} attempts left.")
 
-    # Check game status
-    if "_" not in st.session_state.placeholder:
-        st.success(f"Congratulations! You've guessed the word: {st.session_state.chosen_word}")
-        st.session_state.game_status = "Game Over"
-    elif st.session_state.attempts <= 0:
-        st.error(f"Game over! The word was: {st.session_state.chosen_word}")
-        st.session_state.game_status = "Game Over"
+        st.write(display_placeholder(st.session_state.placeholder))
 
-# Restart the game
-if st.button("Restart Game"):
-    st.session_state.chosen_word = select_random_word(word_list)
-    st.session_state.word_length = len(st.session_state.chosen_word)
-    st.session_state.placeholder = initialize_placeholder(st.session_state.word_length)
-    st.session_state.attempts = 6
-    st.session_state.guessed_letters = set()
-    st.session_state.game_status = "Playing"
-    st.experimental_rerun()
+        # Check game status
+        if "_" not in st.session_state.placeholder:
+            st.write(f"Congratulations! You've guessed the word: {st.session_state.chosen_word}")
+            st.session_state.game_status = "Game Over"
+        elif st.session_state.attempts <= 0:
+            st.write(f"Game over! The word was: {st.session_state.chosen_word}")
+            st.session_state.game_status = "Game Over"
+
+    # Restart the game
+    if st.button("Restart Game"):
+        initialize_game()
+
+# Run the game
+word_guess_game()
