@@ -28,7 +28,7 @@ def initialize_game():
     st.session_state.guessed_letters = set()
     st.session_state.game_status = "Playing"
 
-# Initialize game if not already
+# Initialize game if not already done
 if 'chosen_word' not in st.session_state:
     initialize_game()
 
@@ -38,8 +38,8 @@ def word_guess_game():
     # Reset Game button
     if st.button("Reset Game"):
         initialize_game()
-        st.experimental_rerun()  # Optional: Forces the app to re-run, ensuring the reset takes immediate effect.
-        st.stop()  # Stop further processing after reset.
+        st.write("Game has been reset.")
+        return  # Stop further processing after reset
 
     # Display the current state of the placeholder
     st.write(display_placeholder(st.session_state.placeholder))
