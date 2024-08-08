@@ -28,7 +28,7 @@ def initialize_game():
     st.session_state.guessed_letters = set()
     st.session_state.game_status = "Playing"
 
-# Ensure game is initialized if not already
+# Initialize game if not already
 if 'chosen_word' not in st.session_state:
     initialize_game()
 
