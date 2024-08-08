@@ -38,7 +38,8 @@ def word_guess_game():
     # Reset Game button
     if st.button("Reset Game"):
         initialize_game()
-        st.experimental_rerun()  # Rerun the app to reflect the reset immediately
+        # Show a message to indicate that the game has been reset
+        st.write("Game has been reset. Please enter a new guess.")
 
     # Display the current state of the placeholder
     st.write(display_placeholder(st.session_state.placeholder))
