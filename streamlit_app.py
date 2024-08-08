@@ -1,6 +1,18 @@
 import streamlit as st
 import random
 
+# Initialize session state if not already set
+if 'attempts' not in st.session_state:
+    st.session_state.attempts = 6
+if 'guessed_letters' not in st.session_state:
+    st.session_state.guessed_letters = set()
+if 'game_status' not in st.session_state:
+    st.session_state.game_status = "Playing"
+if 'chosen_word' not in st.session_state:
+    st.session_state.chosen_word = ""
+if 'placeholder' not in st.session_state:
+    st.session_state.placeholder = ""
+
 # List of words for the game
 word_list = ["Pythonic", "looping", "coding"]
 
@@ -28,22 +40,16 @@ def initialize_game():
     st.session_state.guessed_letters = set()
     st.session_state.game_status = "Playing"
 
-# Initialize the game if not already done
-if 'chosen_word' not in st.session_state:
-    initialize_game()
-
 def word_guess_game():
+    if st.session_state.game_status == "Game Over":
+        st.write("Game has been reset. Please enter a new guess.")
+    
     st.title("Word Guess Game")
 
     # Display the current state of the placeholder
     st.write(display_placeholder(st.session_state.placeholder))
 
-    guess = st.text_input("Guess a letter:", value="", max_chars=1).lower()
-
-    # Reset Game button
-    if st.button("Reset Game"):
-        initialize_game()
-        st.experimental_rerun()  # Rerun the app to refresh the UI after resetting
+    guess = st.text_input("Guess a letter:", max_chars=1).lower()
 
     if guess:
         if not guess.isalpha() or len(guess) != 1:
@@ -69,10 +75,10 @@ def word_guess_game():
             st.write(f"Game over! The word was: {st.session_state.chosen_word}")
             st.session_state.game_status = "Game Over"
 
-    # Display the current state
-    st.write(f"Attempts left: {st.session_state.attempts}")
-    st.write(f"Guessed letters: {st.session_state.guessed_letters}")
-    st.write(f"Game status: {st.session_state.game_status}")
+    # Reset game state
+    if st.button("Reset Game"):
+        initialize_game()
+        st.write("Game has been reset. Please enter a new guess.")
 
 # Run the game
 word_guess_game()
